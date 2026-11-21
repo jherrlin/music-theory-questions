@@ -246,6 +246,8 @@ summary { cursor: pointer; color: var(--muted); }
   font-weight: 600;
   font-size: 0.95rem;
   display: flex;
+  flex-direction: column;
+  gap: 1px;
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid #232946;
@@ -255,19 +257,17 @@ summary { cursor: pointer; color: var(--muted); }
   position: relative;
   height: 44px;
   display: flex;
+  flex-direction: column;
+  gap: 1px;
   align-items: center;
   justify-content: center;
   border-right: 1px solid #232946;
   border-bottom: 1px solid #232946;
 }
-.fb-cell.inlay .fb-inlay {
-  position: absolute;
-  bottom: 3px;
-  left: 50%;
-  transform: translateX(-50%);
+.fb-sub {
   font-size: 0.68rem;
-  color: #4c5578;
-  pointer-events: none;
+  line-height: 1;
+  color: rgba(11, 14, 28, 0.8); /* sits on a highlighted pill */
 }
 .fb-dot {
   min-width: 40px;

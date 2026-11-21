@@ -13,7 +13,6 @@
     { label: 'G', pc: 7 },
   ];
   const FRETS = 15;
-  const INLAYS = [3, 5, 7, 9, 12, 15];
   const GENERIC_INTERVALS = ['R', '♭2', '2', '♭3', '3', '4', '♭5', '5', '♭6', '6', '♭7', '7'];
   const SHARP_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
   const FLAT_NAMES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
@@ -167,36 +166,43 @@
       openDot.className = 'fb-dot';
       openDot.textContent = str.label;
       labelCell.appendChild(openDot);
+      if (openMember) {
+        const openSub = document.createElement('span');
+        openSub.className = 'fb-sub';
+        openSub.textContent = sel.mode === 'notes'
+          ? intervalBySemis[0]
+          : openMember.note;
+        labelCell.appendChild(openSub);
+      }
       grid.appendChild(labelCell);
 
       for (let f = 1; f <= FRETS; f++) {
         const pc = (str.pc + f) % 12;
         const member = memberByPc[pc];
         const isRoot = !!member && member.semis === 0;
+        const diff = (pc - tone.rootPc + 12) % 12;
 
-        let label;
-        if (sel.mode === 'notes') {
-          label = member ? member.note : (useFlats ? FLAT_NAMES[pc] : SHARP_NAMES[pc]);
-        } else {
-          const diff = (pc - tone.rootPc + 12) % 12;
-          label = member ? intervalBySemis[diff] : GENERIC_INTERVALS[diff];
-        }
+        // Primary label follows the selected mode; highlighted cells also
+        // show the other representation underneath for cross-reference.
+        const primary = sel.mode === 'notes'
+          ? (member ? member.note : (useFlats ? FLAT_NAMES[pc] : SHARP_NAMES[pc]))
+          : (member ? intervalBySemis[diff] : GENERIC_INTERVALS[diff]);
 
-        const isInlay = INLAYS.indexOf(f) !== -1;
         const cls = 'fb-cell' +
-          (isInlay ? ' inlay' : '') +
           (member ? ' member' : '') +
           (isRoot ? ' root' : '');
         const cell = addCell(grid, '', cls);
         const dot = document.createElement('span');
         dot.className = 'fb-dot';
-        dot.textContent = label;
+        dot.textContent = primary;
         cell.appendChild(dot);
-        if (isInlay) {
-          const num = document.createElement('span');
-          num.className = 'fb-inlay';
-          num.textContent = String(f);
-          cell.appendChild(num);
+        if (member) {
+          const sub = document.createElement('span');
+          sub.className = 'fb-sub';
+          sub.textContent = sel.mode === 'notes'
+            ? intervalBySemis[diff]
+            : member.note;
+          cell.appendChild(sub);
         }
       }
     }
