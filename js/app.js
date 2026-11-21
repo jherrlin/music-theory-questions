@@ -263,17 +263,18 @@
 
   // Play the current chord/scale as a rising run: the root is placed between
   // C4 and B4 and each tone sounds at its semitones above the root, so the
-  // octave matches the theory. Chords are strummed faster than scale runs.
-  // Uses the same pluck synth as the fretboard.
+  // octave matches the theory. Tones are spaced so each one is clearly
+  // audible and rings well past the next. Uses the same pluck synth as the
+  // fretboard.
   function playCardTones() {
     if (!current || !window.MT.playMidi) return;
     if (current.type !== 'chord-notes' && current.type !== 'scale-notes') return;
     const kind = current.type === 'chord-notes' ? 'chord' : 'scale';
     const tone = T.getTones(kind, current.fb.root, current.fb.item);
     const rootMidi = 60 + tone.rootPc; // C4..B4
-    const gapMs = kind === 'chord' ? 130 : 190;
+    const gapMs = 300;
     tone.tones.forEach((t, i) => {
-      window.MT.playMidi(rootMidi + t.semis, (i * gapMs) / 1000, 0.28);
+      window.MT.playMidi(rootMidi + t.semis, (i * gapMs) / 1000, 0.22, 2.6);
     });
   }
 

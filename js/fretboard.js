@@ -137,18 +137,19 @@
 
   // Pluck a pitch, Karplus-Strong style: a short noise burst in a feedback
   // delay ring-buffer decays like a picked string, no audio files needed.
-  // `delay` (seconds) schedules the pluck for arpeggios/runs; `gain` scales it.
-  function playMidi(midi, delay, gain) {
+  // `delay` (seconds) schedules the pluck for arpeggios/runs; `gain` scales it;
+  // `seconds` overrides how long the string rings.
+  function playMidi(midi, delay, gain, seconds) {
     let ctx;
     try {
       ctx = getCtx();
     } catch (e) {
       return; // no Web Audio available; clicking stays silent
     }
+    const dur = seconds || 1.6;
     const freq = 440 * Math.pow(2, (midi - 69) / 12);
     const sr = ctx.sampleRate;
-    const seconds = 1.6;
-    const buffer = ctx.createBuffer(1, Math.ceil(sr * seconds), sr);
+    const buffer = ctx.createBuffer(1, Math.ceil(sr * dur), sr);
     const data = buffer.getChannelData(0);
     const n = Math.max(2, Math.round(sr / freq));
     const ring = new Float32Array(n);
