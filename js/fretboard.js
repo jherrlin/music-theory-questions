@@ -12,8 +12,8 @@
     { label: 'D', pc: 2 },
     { label: 'G', pc: 7 },
   ];
-  const FRETS = 12;
-  const INLAYS = [3, 5, 7, 9, 12];
+  const FRETS = 15;
+  const INLAYS = [3, 5, 7, 9, 12, 15];
   const GENERIC_INTERVALS = ['R', '♭2', '2', '♭3', '3', '4', '♭5', '5', '♭6', '6', '♭7', '7'];
   const SHARP_NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B'];
   const FLAT_NAMES = ['C', 'D♭', 'D', 'E♭', 'E', 'F', 'G♭', 'G', 'A♭', 'A', 'B♭', 'B'];
@@ -148,7 +148,22 @@
     grid.className = 'fb-grid';
 
     for (const str of STRINGS) {
-      addCell(grid, str.label, 'fb-string-label');
+      const openPc = str.pc % 12;
+      const openMember = memberByPc[openPc];
+      const openIsRoot = !!openMember && openMember.semis === 0;
+
+      // String label doubles as the open-string position: highlight it when
+      // the open tone is part of the selection.
+      const labelCell = document.createElement('div');
+      labelCell.className = 'fb-string-label' +
+        (openMember ? ' member' : '') +
+        (openIsRoot ? ' root' : '');
+      const openDot = document.createElement('span');
+      openDot.className = 'fb-dot';
+      openDot.textContent = str.label;
+      labelCell.appendChild(openDot);
+      grid.appendChild(labelCell);
+
       for (let f = 1; f <= FRETS; f++) {
         const pc = (str.pc + f) % 12;
         const member = memberByPc[pc];
