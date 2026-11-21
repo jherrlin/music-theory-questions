@@ -104,7 +104,7 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
 .keys-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
 .keys-table td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
 .keys-table tr:last-child td { border-bottom: 0; }
-.keys-table td.kbd { white-space: nowrap; width: 1%; }
+.keys-table td.kbd { white-space: nowrap; }
 .kbd {
   display: inline-block;
   white-space: nowrap;
