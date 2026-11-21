@@ -137,7 +137,8 @@
 
   // Pluck a pitch, Karplus-Strong style: a short noise burst in a feedback
   // delay ring-buffer decays like a picked string, no audio files needed.
-  function playMidi(midi) {
+  // `delay` (seconds) schedules the pluck for arpeggios/runs; `gain` scales it.
+  function playMidi(midi, delay, gain) {
     let ctx;
     try {
       ctx = getCtx();
@@ -162,11 +163,11 @@
     }
     const src = ctx.createBufferSource();
     src.buffer = buffer;
-    const gain = ctx.createGain();
-    gain.gain.value = 0.35;
-    src.connect(gain);
-    gain.connect(ctx.destination);
-    src.start();
+    const gainNode = ctx.createGain();
+    gainNode.gain.value = gain || 0.35;
+    src.connect(gainNode);
+    gainNode.connect(ctx.destination);
+    src.start(ctx.currentTime + (delay || 0));
   }
 
   function addCell(host, text, cls) {
@@ -289,6 +290,7 @@
   }
 
   window.MT.fretboard = { show: show };
+  window.MT.playMidi = playMidi; // shared pluck synth (also used by the practice view)
 
   buildControls();
   renderMain();

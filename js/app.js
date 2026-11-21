@@ -28,6 +28,7 @@
     showBtn: document.getElementById('show-btn'),
     typeFilters: document.getElementById('type-filters'),
     fbLink: document.getElementById('fb-link'),
+    playTones: document.getElementById('play-tones'),
     hintToggle: document.getElementById('hint-toggle'),
     hintCheck: document.getElementById('hint-check'),
     hint: document.getElementById('hint'),
@@ -144,6 +145,7 @@
     els.chip.textContent = card.typeLabel;
     els.prompt.textContent = card.prompt;
     els.fbLink.hidden = false;
+    els.playTones.hidden = !(card.type === 'chord-notes' || card.type === 'scale-notes');
     updateHint();
     els.input.placeholder = card.placeholder;
     els.input.value = '';
@@ -164,6 +166,7 @@
       els.chip.textContent = '—';
       els.prompt.textContent = 'No card types are selected. Enable at least one type in the settings below.';
       els.fbLink.hidden = true;
+      els.playTones.hidden = true;
       els.hintToggle.hidden = true;
       els.hint.hidden = true;
       els.answerRow.hidden = true;
@@ -256,6 +259,24 @@
     next();
   }
 
+  /* ---------- sound ---------- */
+
+  // Play the current chord/scale as a rising run: the root is placed between
+  // C4 and B4 and each tone sounds at its semitones above the root, so the
+  // octave matches the theory. Chords are strummed faster than scale runs.
+  // Uses the same pluck synth as the fretboard.
+  function playCardTones() {
+    if (!current || !window.MT.playMidi) return;
+    if (current.type !== 'chord-notes' && current.type !== 'scale-notes') return;
+    const kind = current.type === 'chord-notes' ? 'chord' : 'scale';
+    const tone = T.getTones(kind, current.fb.root, current.fb.item);
+    const rootMidi = 60 + tone.rootPc; // C4..B4
+    const gapMs = kind === 'chord' ? 130 : 190;
+    tone.tones.forEach((t, i) => {
+      window.MT.playMidi(rootMidi + t.semis, (i * gapMs) / 1000, 0.28);
+    });
+  }
+
   /* ---------- events ---------- */
 
   els.checkBtn.addEventListener('click', check);
@@ -268,6 +289,7 @@
       switchView('fretboard');
     }
   });
+  els.playTones.addEventListener('click', playCardTones);
   els.hintCheck.addEventListener('change', () => {
     srs.setSetting('hint', els.hintCheck.checked);
     updateHint();

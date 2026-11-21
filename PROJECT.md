@@ -31,8 +31,9 @@ Everything the user does is saved in the browser (localStorage).
 - **Practice** — the flashcard flow: type an answer, check it, rate the card.
   Includes a "Show on fretboard" link to the matching Fretboard selection, an
   optional "Show intervals" hint toggle (scale/chord tone cards) that reveals the
-  interval pattern without giving away the answer, a collapsible help section with
-  a plain all-tones mandolin fretboard, and per-card-type filters
+  interval pattern without giving away the answer, a "Play tones" button on
+  tone cards that plays the chord/scale as a rising run, a collapsible help
+  section with a plain all-tones mandolin fretboard, and per-card-type filters
 - **Overview** — every question in the deck with its answer, grouped by type,
   downloadable as a Markdown file
 - **Fretboard** — a mandolin fretboard (G–D–A–E courses, frets 0–15, nut line,
