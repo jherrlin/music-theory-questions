@@ -89,6 +89,26 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
   letter-spacing: 0.02em;
 }
 
+/* ---------- keys help view ---------- */
+
+.keys-intro, .keys-note { color: var(--muted); font-size: 0.9rem; margin: 0 0 16px; }
+.keys-note { margin-bottom: 0; }
+.keys-groups { display: grid; gap: 18px; }
+.keys-group h2 { font-size: 1.05rem; color: var(--accent); margin: 0 0 10px; }
+.keys-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.keys-table td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+.keys-table td.kbd { white-space: nowrap; }
+.kbd {
+  display: inline-block;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #12162a;
+  color: var(--ink);
+  font-size: 0.8rem;
+  padding: 1px 8px;
+  margin-right: 6px;
+}
+
 .answer-row { display: flex; gap: 10px; }
 
 #answer-input {

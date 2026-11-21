@@ -38,6 +38,7 @@
       practice: document.getElementById('practice-view'),
       overview: document.getElementById('overview-view'),
       fretboard: document.getElementById('fretboard-view'),
+      keys: document.getElementById('keys-view'),
     },
   };
 
@@ -296,7 +297,26 @@
   });
 
   document.addEventListener('keydown', (e) => {
-    if (els.views.practice.hidden) return; // shortcuts only apply while practicing
+    const tag = e.target && e.target.tagName;
+    const typing = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+
+    // View switching works from any view, but never while typing in a field
+    // (so the answer input keeps receiving text and selects keep typeahead).
+    if (!typing && (e.key === 'p' || e.key === 'o' || e.key === 'f' || e.key === 'k')) {
+      e.preventDefault();
+      switchView({ p: 'practice', o: 'overview', f: 'fretboard', k: 'keys' }[e.key]);
+      return;
+    }
+
+    if (!els.views.practice.hidden) {
+      // Escape elsewhere returns to Practice.
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        switchView('practice');
+      }
+      return;
+    }
+
     if (e.key === 'Enter') {
       e.preventDefault(); // don't let a focused button fire too
       if (mode === 'asking') check();
@@ -308,6 +328,11 @@
     }
     if (mode === 'answered' && ['1', '2', '3', '4'].indexOf(e.key) !== -1) {
       applyRating(['again', 'hard', 'good', 'easy'][Number(e.key) - 1]);
+      return;
+    }
+    if (mode === 'asking' && e.key === 'Escape') {
+      e.preventDefault();
+      finishAsk(null, ''); // reveal = skip the card
     }
   });
 

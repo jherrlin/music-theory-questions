@@ -18,6 +18,7 @@
       <button class="btn tab active" data-view="practice">Practice</button>
       <button class="btn tab" data-view="overview">Overview</button>
       <button class="btn tab" data-view="fretboard">Fretboard</button>
+      <button class="btn tab" data-view="keys">Keys</button>
     </nav>
 
     <section id="practice-view" class="view">
@@ -104,8 +105,41 @@
       <div id="fretboard"></div>
     </section>
 
+    <section id="keys-view" class="view" hidden>
+      <p class="keys-intro">
+        The app is fully keyboard driven — every view, answer, and rating can be
+        reached without a mouse. Dropdowns and checkboxes also work with the
+        usual Tab / arrow keys / Space.
+      </p>
+      <div class="keys-groups">
+        <section class="keys-group">
+          <h2>Anywhere</h2>
+          <table class="keys-table">
+            <tr><td class="kbd">P</td><td>Go to Practice</td></tr>
+            <tr><td class="kbd">O</td><td>Go to Overview</td></tr>
+            <tr><td class="kbd">F</td><td>Go to Fretboard</td></tr>
+            <tr><td class="kbd">K</td><td>Go to this Keys help</td></tr>
+            <tr><td class="kbd">Esc</td><td>Back to Practice</td></tr>
+          </table>
+        </section>
+        <section class="keys-group">
+          <h2>While practicing</h2>
+          <table class="keys-table">
+            <tr><td class="kbd">Enter</td><td>Check the typed answer; afterwards apply the suggested rating</td></tr>
+            <tr><td class="kbd">1 – 4</td><td>Rate the card: Again / Hard / Good / Easy (after checking)</td></tr>
+            <tr><td class="kbd">Space</td><td>Show the answer when the answer field is not focused (else it types a space)</td></tr>
+            <tr><td class="kbd">Esc</td><td>Skip the card and reveal the answer (before checking)</td></tr>
+          </table>
+        </section>
+      </div>
+      <p class="keys-note">
+        Leave the answer field (Tab) to use the view shortcuts while a question is
+        showing. Everything you do is saved in your browser (localStorage).
+      </p>
+    </section>
+
     <footer class="hints">
-      Enter — check / continue · 1–4 — rate card · Answers are saved in your browser (localStorage).
+      Enter — check / continue · 1–4 — rate card · P / O / F / K — switch views · Esc — skip / back
     </footer>
   </main>
 
