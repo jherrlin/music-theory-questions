@@ -285,6 +285,7 @@
 
   /* ---------- boot ---------- */
 
+  srs.prune(deck.map((card) => card.id)); // drop records for removed cards
   buildTypeFilters();
   updateStats();
   renderHardest();

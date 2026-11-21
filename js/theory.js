@@ -122,6 +122,22 @@
       });
     }
 
+    // Interval questions are key-independent: the intervals of a scale type are
+    // the same in every key, so these cards are root-agnostic.
+    for (const scale of SCALES) {
+      const tokens = scale.degrees.map(([deg, semis]) => degreeToken(deg, semis));
+      deck.push({
+        id: 'scale-intervals:' + scale.id,
+        type: 'scale-intervals',
+        typeLabel: 'Scale intervals',
+        prompt: 'Which intervals does the ' + scale.label + ' scale contain?',
+        answerIntervals: tokens,
+        answerIntervalSemis: scale.degrees.map(([, s]) => s).sort((a, b) => a - b),
+        answerText: tokens.join(' – '),
+        placeholder: 'e.g. 1, 2, b3, 4, 5, 6, b7',
+      });
+    }
+
     for (const root of ROOTS) {
       for (const scale of SCALES) {
         const label = root.name + ' ' + scale.label;
@@ -135,17 +151,6 @@
           answerPcs: scale.degrees.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
           placeholder: 'e.g. D, E, F, G, A, B, C#',
-        });
-        const tokens = scale.degrees.map(([deg, semis]) => degreeToken(deg, semis));
-        deck.push({
-          id: 'scale-intervals:' + scale.id + ':' + root.name,
-          type: 'scale-intervals',
-          typeLabel: 'Scale intervals',
-          prompt: 'Which intervals does the ' + label + ' scale contain?',
-          answerIntervals: tokens,
-          answerIntervalSemis: scale.degrees.map(([, s]) => s).sort((a, b) => a - b),
-          answerText: tokens.join(' – '),
-          placeholder: 'e.g. 1, 2, b3, 4, 5, 6, b7',
         });
       }
     }

@@ -233,6 +233,16 @@
     save();
   }
 
+  // Drop records for cards that no longer exist (e.g. after the deck changed).
+  function prune(validIds) {
+    const keep = {};
+    for (const id of validIds) {
+      if (state.cards[id]) keep[id] = state.cards[id];
+    }
+    state.cards = keep;
+    save();
+  }
+
   window.MT = window.MT || {};
   window.MT.srs = {
     grade: grade,
@@ -245,5 +255,6 @@
     getSetting: getSetting,
     setSetting: setSetting,
     reset: reset,
+    prune: prune,
   };
 })();
