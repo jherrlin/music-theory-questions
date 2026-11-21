@@ -183,6 +183,8 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
 .btn.rate.easy .rate-label { color: var(--good); }
 
 .enter-hint { margin-top: 10px; font-size: 0.8rem; color: var(--muted); min-height: 1em; text-align: center; }
+/* When empty (asking mode before checking), take no space at all. */
+.feedback:empty, .enter-hint:empty { margin-top: 0; min-height: 0; }
 
 .panel { margin-top: 20px; }
 
