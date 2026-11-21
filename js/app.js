@@ -309,6 +309,14 @@
     }
 
     if (!els.views.practice.hidden) {
+      // H toggles the intervals hint (same as the checkbox below the question).
+      if (!typing && e.key === 'h') {
+        e.preventDefault();
+        els.hintCheck.checked = !els.hintCheck.checked;
+        srs.setSetting('hint', els.hintCheck.checked);
+        updateHint();
+        return;
+      }
       // Escape elsewhere returns to Practice.
       if (e.key === 'Escape') {
         e.preventDefault();

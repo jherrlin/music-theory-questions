@@ -93,19 +93,27 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
 
 .keys-intro, .keys-note { color: var(--muted); font-size: 0.9rem; margin: 0 0 16px; }
 .keys-note { margin-bottom: 0; }
-.keys-groups { display: grid; gap: 18px; }
-.keys-group h2 { font-size: 1.05rem; color: var(--accent); margin: 0 0 10px; }
+.keys-groups { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+.keys-group {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+.keys-group h2 { font-size: 1.05rem; color: var(--accent); margin: 0 0 12px; }
 .keys-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-.keys-table td { padding: 6px 10px 6px 0; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
-.keys-table td.kbd { white-space: nowrap; }
+.keys-table td { padding: 7px 10px 7px 0; border-bottom: 1px solid var(--line); color: var(--muted); vertical-align: top; }
+.keys-table tr:last-child td { border-bottom: 0; }
+.keys-table td.kbd { white-space: nowrap; width: 1%; }
 .kbd {
   display: inline-block;
-  border: 1px solid var(--line);
+  border: 1px solid rgba(124, 158, 255, 0.35);
   border-radius: 6px;
-  background: #12162a;
+  background: rgba(124, 158, 255, 0.12);
   color: var(--ink);
-  font-size: 0.8rem;
-  padding: 1px 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  padding: 2px 8px;
   margin-right: 6px;
 }
 
