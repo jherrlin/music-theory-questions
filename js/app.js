@@ -28,6 +28,9 @@
     showBtn: document.getElementById('show-btn'),
     typeFilters: document.getElementById('type-filters'),
     fbLink: document.getElementById('fb-link'),
+    hintToggle: document.getElementById('hint-toggle'),
+    hintCheck: document.getElementById('hint-check'),
+    hint: document.getElementById('hint'),
     hardest: document.getElementById('hardest'),
     resetBtn: document.getElementById('reset-btn'),
     nav: document.getElementById('view-nav'),
@@ -140,6 +143,7 @@
     els.chip.textContent = card.typeLabel;
     els.prompt.textContent = card.prompt;
     els.fbLink.hidden = false;
+    updateHint();
     els.input.placeholder = card.placeholder;
     els.input.value = '';
     els.feedback.textContent = '';
@@ -159,6 +163,8 @@
       els.chip.textContent = '—';
       els.prompt.textContent = 'No card types are selected. Enable at least one type in the settings below.';
       els.fbLink.hidden = true;
+      els.hintToggle.hidden = true;
+      els.hint.hidden = true;
       els.answerRow.hidden = true;
       els.showRow.hidden = true;
       els.ratingRow.hidden = true;
@@ -261,6 +267,19 @@
       switchView('fretboard');
     }
   });
+  els.hintCheck.addEventListener('change', () => {
+    srs.setSetting('hint', els.hintCheck.checked);
+    updateHint();
+  });
+
+  // The intervals hint exists only for scale-tone cards, and shows when enabled.
+  function updateHint() {
+    const isScaleTones = !!current && current.type === 'scale-notes';
+    els.hintToggle.hidden = !isScaleTones;
+    const show = isScaleTones && els.hintCheck.checked;
+    els.hint.hidden = !show;
+    if (show) els.hint.textContent = current.answerIntervals.join(' – ');
+  }
   for (const btn of ratingButtons) {
     btn.addEventListener('click', () => {
       applyRating(btn.dataset.rating);
@@ -295,6 +314,7 @@
   /* ---------- boot ---------- */
 
   srs.prune(deck.map((card) => card.id)); // drop records for removed cards
+  els.hintCheck.checked = !!srs.getSetting('hint', false);
   buildTypeFilters();
   updateStats();
   renderHardest();

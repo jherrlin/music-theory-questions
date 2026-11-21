@@ -72,6 +72,23 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
   text-decoration: underline;
 }
 
+.hint-toggle {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin: -10px 0 14px 12px;
+}
+
+.hint {
+  margin: -6px 0 14px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
 .answer-row { display: flex; gap: 10px; }
 
 #answer-input {

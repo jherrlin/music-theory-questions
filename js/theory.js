@@ -145,12 +145,14 @@
       for (const scale of SCALES) {
         const label = root.name + ' ' + scale.label;
         const notes = scale.degrees.map(([deg, semis]) => spellTone(root, deg, semis));
+        const intervalTokens = scale.degrees.map(([deg, semis]) => degreeToken(deg, semis));
         deck.push({
           id: 'scale-notes:' + scale.id + ':' + root.name,
           type: 'scale-notes',
           typeLabel: 'Scale tones',
           prompt: 'Which tones are in the ' + label + ' scale?',
           answerNotes: notes,
+          answerIntervals: intervalTokens,
           answerPcs: scale.degrees.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
           placeholder: 'e.g. D, E, F, G, A, B, C#',
