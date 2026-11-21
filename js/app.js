@@ -144,7 +144,7 @@
     els.chip.textContent = card.typeLabel;
     els.prompt.textContent = card.prompt;
     els.fbLink.hidden = false;
-    els.playTones.hidden = !(card.type === 'chord-notes' || card.type === 'scale-notes');
+    els.playTones.disabled = !(card.type === 'chord-notes' || card.type === 'scale-notes');
     updateHint();
     els.input.placeholder = card.placeholder;
     els.input.value = '';
@@ -165,7 +165,7 @@
       els.chip.textContent = '—';
       els.prompt.textContent = 'No card types are selected. Enable at least one type in the settings below.';
       els.fbLink.hidden = true;
-      els.playTones.hidden = true;
+      els.playTones.disabled = true;
       els.hintToggle.hidden = true;
       els.hint.hidden = true;
       els.answerRow.hidden = true;

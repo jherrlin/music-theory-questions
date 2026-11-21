@@ -120,6 +120,7 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
 }
 
 .answer-row { display: flex; gap: 10px; }
+.answer-row .btn { flex: 1; }
 
 #answer-input {
   display: block;
@@ -146,6 +147,7 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
   font-family: inherit;
 }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: #0b0e1c; font-weight: 600; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .btn.ghost { background: transparent; color: var(--muted); }
 .btn.danger { background: transparent; border-color: var(--bad); color: var(--bad); justify-self: start; }
 
