@@ -147,15 +147,20 @@
     const grid = document.createElement('div');
     grid.className = 'fb-grid';
 
+    // Header row: fret numbers, with 0 marking the open-string column.
+    addCell(grid, '0', 'fb-fret-label zero');
+    for (let f = 1; f <= FRETS; f++) addCell(grid, String(f), 'fb-fret-label');
+
     for (const str of STRINGS) {
       const openPc = str.pc % 12;
       const openMember = memberByPc[openPc];
       const openIsRoot = !!openMember && openMember.semis === 0;
 
-      // String label doubles as the open-string position: highlight it when
-      // the open tone is part of the selection.
+      // String label doubles as the open-string position: highlighted when
+      // the open tone is part of the selection, drawn inside the open zone
+      // left of the nut.
       const labelCell = document.createElement('div');
-      labelCell.className = 'fb-string-label' +
+      labelCell.className = 'fb-string-label open' +
         (openMember ? ' member' : '') +
         (openIsRoot ? ' root' : '');
       const openDot = document.createElement('span');

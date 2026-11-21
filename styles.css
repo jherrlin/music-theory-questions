@@ -227,8 +227,15 @@ summary { cursor: pointer; color: var(--muted); }
   grid-template-columns: 2rem repeat(15, minmax(34px, 1fr));
   gap: 0;
   min-width: 620px;
-  border-left: 3px solid #3a4370; /* the nut */
+  border-left: 4px solid #55608f; /* the nut */
 }
+.fb-fret-label {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-align: center;
+  padding-bottom: 4px;
+}
+.fb-fret-label.zero { color: var(--accent); }
 .fb-string-label {
   color: var(--muted);
   font-weight: 600;
@@ -236,7 +243,9 @@ summary { cursor: pointer; color: var(--muted); }
   display: flex;
   align-items: center;
   justify-content: center;
+  border-bottom: 1px solid #232946;
 }
+.fb-string-label.open { background: rgba(124, 158, 255, 0.07); } /* open-string zone */
 .fb-cell {
   position: relative;
   height: 38px;
