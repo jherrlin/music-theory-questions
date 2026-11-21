@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Music Theory Flashcards</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
-  <link rel="stylesheet" href="styles.css?v=2895deb3">
+  <link rel="stylesheet" href="styles.css?v=c4577a0b">
 </head>
 <body>
   <main class="app">
@@ -29,10 +29,12 @@
         <label id="hint-toggle" class="hint-toggle" hidden><input type="checkbox" id="hint-check"> Show intervals</label>
         <div id="hint" class="hint" hidden></div>
 
+        <input id="answer-input" type="text" autocomplete="off" spellcheck="false" placeholder="">
+
         <div id="answer-row" class="answer-row">
-          <input id="answer-input" type="text" autocomplete="off" spellcheck="false" placeholder="">
           <button id="play-tones" class="btn primary" type="button" hidden>▶ Play tones</button>
           <button id="check-btn" class="btn primary">Check</button>
+          <button id="show-btn" class="btn ghost">Show answer</button>
         </div>
 
         <div id="feedback" class="feedback"></div>
@@ -52,10 +54,6 @@
           </button>
         </div>
         <div id="enter-hint" class="enter-hint"></div>
-
-        <div id="show-row" class="show-row">
-          <button id="show-btn" class="btn ghost">Show answer</button>
-        </div>
       </section>
 
       <section class="panel">
@@ -149,6 +147,6 @@
   <script src="js/srs.js?v=cae7240d"></script>
   <script src="js/overview.js?v=a6f8975a"></script>
   <script src="js/fretboard.js?v=d7ffaeec"></script>
-  <script src="js/app.js?v=0184baf9"></script>
+  <script src="js/app.js?v=4855fecf"></script>
 </body>
 </html>

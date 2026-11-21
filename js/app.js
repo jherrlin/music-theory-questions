@@ -24,7 +24,6 @@
     feedback: document.getElementById('feedback'),
     ratingRow: document.getElementById('rating-row'),
     enterHint: document.getElementById('enter-hint'),
-    showRow: document.getElementById('show-row'),
     showBtn: document.getElementById('show-btn'),
     typeFilters: document.getElementById('type-filters'),
     fbLink: document.getElementById('fb-link'),
@@ -153,7 +152,7 @@
     els.feedback.className = 'feedback';
     mode = 'asking';
     els.answerRow.hidden = false;
-    els.showRow.hidden = false;
+    els.showBtn.hidden = false;
     els.ratingRow.hidden = true;
     els.enterHint.textContent = '';
     els.input.focus();
@@ -170,7 +169,7 @@
       els.hintToggle.hidden = true;
       els.hint.hidden = true;
       els.answerRow.hidden = true;
-      els.showRow.hidden = true;
+      els.showBtn.hidden = true;
       els.ratingRow.hidden = true;
       els.feedback.textContent = '';
       return;
@@ -237,7 +236,7 @@
     els.enterHint.textContent = 'Enter = ' + RATING_LABELS[suggested];
 
     els.answerRow.hidden = true;
-    els.showRow.hidden = true;
+    els.showBtn.hidden = true;
     els.ratingRow.hidden = false;
   }
 
