@@ -147,13 +147,9 @@
     const grid = document.createElement('div');
     grid.className = 'fb-grid';
 
-    // Header row: fret numbers.
-    addCell(grid, '', 'fb-corner');
-    for (let f = 0; f <= FRETS; f++) addCell(grid, String(f), 'fb-fret-label');
-
     for (const str of STRINGS) {
       addCell(grid, str.label, 'fb-string-label');
-      for (let f = 0; f <= FRETS; f++) {
+      for (let f = 1; f <= FRETS; f++) {
         const pc = (str.pc + f) % 12;
         const member = memberByPc[pc];
         const isRoot = !!member && member.semis === 0;
@@ -166,9 +162,9 @@
           label = member ? intervalBySemis[diff] : GENERIC_INTERVALS[diff];
         }
 
+        const isInlay = INLAYS.indexOf(f) !== -1;
         const cls = 'fb-cell' +
-          (f === 0 ? ' open' : '') +
-          (INLAYS.indexOf(f) !== -1 ? ' inlay' : '') +
+          (isInlay ? ' inlay' : '') +
           (member ? ' member' : '') +
           (isRoot ? ' root' : '');
         const cell = addCell(grid, '', cls);
@@ -176,6 +172,12 @@
         dot.className = 'fb-dot';
         dot.textContent = label;
         cell.appendChild(dot);
+        if (isInlay) {
+          const num = document.createElement('span');
+          num.className = 'fb-inlay';
+          num.textContent = String(f);
+          cell.appendChild(num);
+        }
       }
     }
 

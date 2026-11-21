@@ -224,16 +224,10 @@ summary { cursor: pointer; color: var(--muted); }
 
 .fb-grid {
   display: grid;
-  grid-template-columns: 2rem repeat(13, minmax(34px, 1fr));
+  grid-template-columns: 2rem repeat(12, minmax(34px, 1fr));
   gap: 0;
   min-width: 520px;
-}
-.fb-corner { }
-.fb-fret-label {
-  color: var(--muted);
-  font-size: 0.72rem;
-  text-align: center;
-  padding-bottom: 4px;
+  border-left: 3px solid #3a4370; /* the nut */
 }
 .fb-string-label {
   color: var(--muted);
@@ -252,17 +246,14 @@ summary { cursor: pointer; color: var(--muted); }
   border-right: 1px solid #232946;
   border-bottom: 1px solid #232946;
 }
-.fb-cell.open { border-left: 3px solid #3a4370; }
-.fb-cell.inlay::after {
-  content: '';
+.fb-cell.inlay .fb-inlay {
   position: absolute;
   bottom: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #3a4370;
+  font-size: 0.62rem;
+  color: #4c5578;
+  pointer-events: none;
 }
 .fb-dot {
   min-width: 32px;
