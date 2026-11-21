@@ -99,7 +99,7 @@
           id: 'chord-notes:' + chord.id + ':' + root.name,
           type: 'chord-notes',
           typeLabel: 'Chord tones',
-          prompt: 'Which notes are in the chord ' + name + '?',
+          prompt: 'Which tones are in the chord ' + name + '?',
           answerNotes: notes,
           answerPcs: chord.tones.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
@@ -129,8 +129,8 @@
         deck.push({
           id: 'scale-notes:' + scale.id + ':' + root.name,
           type: 'scale-notes',
-          typeLabel: 'Scale notes',
-          prompt: 'Which notes are in the ' + label + ' scale?',
+          typeLabel: 'Scale tones',
+          prompt: 'Which tones are in the ' + label + ' scale?',
           answerNotes: notes,
           answerPcs: scale.degrees.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
@@ -196,11 +196,43 @@
     return ((DEGREE_NATURALS[deg - 1] + acc) % 12 + 12) % 12;
   }
 
+  /* ---------- fretboard / reference helpers ---------- */
+
+  // Resolve a chord or scale selection (kind + root + item id) to its tones with
+  // pitch class, correctly spelled note name and interval label.
+  function getTones(kind, rootName, itemId) {
+    const root = ROOTS.find((r) => r.name === rootName);
+    if (!root) return null;
+    const list = kind === 'chord' ? CHORDS : SCALES;
+    const item = list.find((x) => x.id === itemId);
+    if (!item) return null;
+    const pairs = item.tones || item.degrees;
+    const rootPitch = (LETTER_SEMIS[root.letter] + root.acc + 120) % 12;
+    return {
+      kind: kind,
+      id: item.id,
+      rootName: root.name,
+      rootPc: rootPitch,
+      title: kind === 'chord' ? root.name + item.suffix : root.name + ' ' + item.label,
+      tones: pairs.map(([deg, semis]) => ({
+        deg: deg,
+        semis: semis,
+        pc: ((rootPitch + semis) % 12 + 12) % 12,
+        note: spellTone(root, deg, semis),
+        interval: degreeToken(deg, semis),
+      })),
+    };
+  }
+
   window.MT = {
     buildDeck: buildDeck,
     extractNoteTokens: extractNoteTokens,
     parseNoteToken: parseNoteToken,
     extractIntervalTokens: extractIntervalTokens,
     parseIntervalToken: parseIntervalToken,
+    getTones: getTones,
+    ROOT_NAMES: ROOTS.map((r) => r.name),
+    CHORD_TYPES: CHORDS.map((c) => ({ id: c.id, label: c.label })),
+    SCALE_TYPES: SCALES.map((s) => ({ id: s.id, label: s.label })),
   };
 })();

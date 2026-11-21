@@ -217,6 +217,17 @@
     save();
   }
 
+  function getSetting(key, fallback) {
+    if (state.settings && state.settings[key] !== undefined) return state.settings[key];
+    return fallback;
+  }
+
+  function setSetting(key, value) {
+    state.settings = state.settings || {};
+    state.settings[key] = value;
+    save();
+  }
+
   function reset() {
     state = { version: 1, cards: {}, settings: state.settings };
     save();
@@ -231,6 +242,8 @@
     hardest: hardest,
     getTypes: getTypes,
     setTypes: setTypes,
+    getSetting: getSetting,
+    setSetting: setSetting,
     reset: reset,
   };
 })();

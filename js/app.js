@@ -8,7 +8,7 @@
   const ALL_TYPES = [
     { id: 'chord-notes', label: 'Chord tones' },
     { id: 'chord-intervals', label: 'Chord intervals' },
-    { id: 'scale-notes', label: 'Scale notes' },
+    { id: 'scale-notes', label: 'Scale tones' },
     { id: 'scale-intervals', label: 'Scale intervals' },
   ];
 
@@ -29,7 +29,26 @@
     typeFilters: document.getElementById('type-filters'),
     hardest: document.getElementById('hardest'),
     resetBtn: document.getElementById('reset-btn'),
+    nav: document.getElementById('view-nav'),
+    views: {
+      practice: document.getElementById('practice-view'),
+      overview: document.getElementById('overview-view'),
+      fretboard: document.getElementById('fretboard-view'),
+    },
   };
+
+  const navButtons = Array.prototype.slice.call(els.nav.querySelectorAll('button[data-view]'));
+
+  function switchView(name) {
+    for (const key of Object.keys(els.views)) els.views[key].hidden = key !== name;
+    for (const btn of navButtons) btn.classList.toggle('active', btn.dataset.view === name);
+    if (name === 'overview') window.MT.overview.render();
+    if (name === 'practice' && current && mode === 'asking') els.input.focus();
+  }
+
+  for (const btn of navButtons) {
+    btn.addEventListener('click', () => switchView(btn.dataset.view));
+  }
 
   const ratingButtons = Array.prototype.slice.call(els.ratingRow.querySelectorAll('button[data-rating]'));
   const RATING_LABELS = { again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy' };
@@ -249,6 +268,7 @@
   });
 
   document.addEventListener('keydown', (e) => {
+    if (els.views.practice.hidden) return; // shortcuts only apply while practicing
     if (e.key === 'Enter') {
       e.preventDefault(); // don't let a focused button fire too
       if (mode === 'asking') check();
