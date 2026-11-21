@@ -20,7 +20,10 @@ body {
   min-height: 100vh;
 }
 
-.app { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+.app { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+
+/* The practice card reads best narrow; give the fretboard and overview the room. */
+#practice-view { max-width: 720px; margin-left: auto; margin-right: auto; }
 
 .topbar {
   display: flex;
@@ -224,16 +227,16 @@ summary { cursor: pointer; color: var(--muted); }
 
 .fb-grid {
   display: grid;
-  grid-template-columns: 2rem repeat(15, minmax(34px, 1fr));
+  grid-template-columns: 2.2rem repeat(15, minmax(40px, 1fr));
   gap: 0;
-  min-width: 620px;
+  min-width: 652px;
 }
 .fb-fret-label.zero, .fb-string-label.open {
   border-right: 4px solid #55608f; /* the nut, right of the 0 column */
 }
 .fb-fret-label {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   text-align: center;
   padding-bottom: 4px;
 }
@@ -241,7 +244,7 @@ summary { cursor: pointer; color: var(--muted); }
 .fb-string-label {
   color: var(--muted);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,7 +253,7 @@ summary { cursor: pointer; color: var(--muted); }
 .fb-string-label.open { background: rgba(124, 158, 255, 0.07); } /* open-string zone */
 .fb-cell {
   position: relative;
-  height: 38px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,22 +262,22 @@ summary { cursor: pointer; color: var(--muted); }
 }
 .fb-cell.inlay .fb-inlay {
   position: absolute;
-  bottom: 2px;
+  bottom: 3px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 0.62rem;
+  font-size: 0.68rem;
   color: #4c5578;
   pointer-events: none;
 }
 .fb-dot {
-  min-width: 32px;
-  height: 26px;
-  padding: 0 5px;
+  min-width: 40px;
+  height: 32px;
+  padding: 0 6px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   color: #6b7494;
   z-index: 1;
 }
