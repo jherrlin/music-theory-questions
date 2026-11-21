@@ -95,12 +95,14 @@
       for (const chord of CHORDS) {
         const name = root.name + chord.suffix;
         const notes = chord.tones.map(([deg, semis]) => spellTone(root, deg, semis));
+        const intervalTokens = chord.tones.map(([deg, semis]) => degreeToken(deg, semis));
         deck.push({
           id: 'chord-notes:' + chord.id + ':' + root.name,
           type: 'chord-notes',
           typeLabel: 'Chord tones',
           prompt: 'Which tones are in the chord ' + name + '?',
           answerNotes: notes,
+          answerIntervals: intervalTokens,
           answerPcs: chord.tones.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
           placeholder: 'e.g. C, E, G',

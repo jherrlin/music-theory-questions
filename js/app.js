@@ -272,11 +272,11 @@
     updateHint();
   });
 
-  // The intervals hint exists only for scale-tone cards, and shows when enabled.
+  // The intervals hint exists only for tone cards (chords/scales), and shows when enabled.
   function updateHint() {
-    const isScaleTones = !!current && current.type === 'scale-notes';
-    els.hintToggle.hidden = !isScaleTones;
-    const show = isScaleTones && els.hintCheck.checked;
+    const isToneCard = !!current && (current.type === 'scale-notes' || current.type === 'chord-notes');
+    els.hintToggle.hidden = !isToneCard;
+    const show = isToneCard && els.hintCheck.checked;
     els.hint.hidden = !show;
     if (show) els.hint.textContent = current.answerIntervals.join(' – ');
   }
