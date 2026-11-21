@@ -1,4 +1,4 @@
-# Music theory flashcards
+# Mandolin Theory Flashcards
 
 A pure JavaScript and HTML app (no build step, no dependencies — just open
 `index.html` in a browser) that shows flashcards with music theory questions.

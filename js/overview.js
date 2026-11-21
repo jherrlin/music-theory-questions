@@ -12,7 +12,7 @@
   ];
 
   function markdown() {
-    const lines = ['# Music Theory Flashcards — Overview', ''];
+    const lines = ['# Mandolin Theory Flashcards — Overview', ''];
     for (const [type, label] of GROUPS) {
       const cards = deck.filter((c) => c.type === type);
       lines.push('## ' + label + ' (' + cards.length + ')', '');
