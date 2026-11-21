@@ -59,6 +59,19 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
 
 .prompt { font-size: 1.5rem; margin: 0 0 20px; line-height: 1.35; }
 
+.fb-link {
+  display: inline-block;
+  background: transparent;
+  border: 0;
+  color: var(--accent);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0;
+  margin: -10px 0 14px;
+  text-decoration: underline;
+}
+
 .answer-row { display: flex; gap: 10px; }
 
 #answer-input {

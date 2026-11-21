@@ -27,6 +27,7 @@
     showRow: document.getElementById('show-row'),
     showBtn: document.getElementById('show-btn'),
     typeFilters: document.getElementById('type-filters'),
+    fbLink: document.getElementById('fb-link'),
     hardest: document.getElementById('hardest'),
     resetBtn: document.getElementById('reset-btn'),
     nav: document.getElementById('view-nav'),
@@ -138,6 +139,7 @@
   function renderCard(card) {
     els.chip.textContent = card.typeLabel;
     els.prompt.textContent = card.prompt;
+    els.fbLink.hidden = false;
     els.input.placeholder = card.placeholder;
     els.input.value = '';
     els.feedback.textContent = '';
@@ -156,6 +158,7 @@
       current = null;
       els.chip.textContent = '—';
       els.prompt.textContent = 'No card types are selected. Enable at least one type in the settings below.';
+      els.fbLink.hidden = true;
       els.answerRow.hidden = true;
       els.showRow.hidden = true;
       els.ratingRow.hidden = true;
@@ -251,6 +254,12 @@
   els.checkBtn.addEventListener('click', check);
   els.showBtn.addEventListener('click', () => {
     if (current && mode === 'asking') finishAsk(null, '');
+  });
+  els.fbLink.addEventListener('click', () => {
+    if (current && current.fb && window.MT.fretboard) {
+      window.MT.fretboard.show(current.fb);
+      switchView('fretboard');
+    }
   });
   for (const btn of ratingButtons) {
     btn.addEventListener('click', () => {

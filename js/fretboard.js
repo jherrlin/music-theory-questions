@@ -226,6 +226,21 @@
     renderInto(els.board, selection(), sel.mode, true);
   }
 
+  // Apply a practice-card mapping ({kind, root, item}) and show the board.
+  // Root-agnostic cards keep the currently selected key.
+  function show(fb) {
+    if (!fb || (fb.kind !== 'chord' && fb.kind !== 'scale')) return;
+    sel.kind = fb.kind;
+    if (fb.root && T.ROOT_NAMES.indexOf(fb.root) !== -1) sel.root = fb.root;
+    const list = fb.kind === 'chord' ? T.CHORD_TYPES : T.SCALE_TYPES;
+    sel.item = list.some((x) => x.id === fb.item) ? fb.item : list[0].id;
+    saveSel();
+    buildControls();
+    renderMain();
+  }
+
+  window.MT.fretboard = { show: show };
+
   buildControls();
   renderMain();
   renderInto(document.getElementById('help-fretboard'), null, 'notes', false);

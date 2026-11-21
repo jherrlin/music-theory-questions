@@ -104,6 +104,7 @@
           answerPcs: chord.tones.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
           placeholder: 'e.g. C, E, G',
+          fb: { kind: 'chord', root: root.name, item: chord.id },
         });
       }
     }
@@ -119,6 +120,7 @@
         answerIntervalSemis: chord.tones.map(([, s]) => s).sort((a, b) => a - b),
         answerText: tokens.join(' – '),
         placeholder: 'e.g. 1, b3, 5',
+        fb: { kind: 'chord', root: null, item: chord.id },
       });
     }
 
@@ -135,6 +137,7 @@
         answerIntervalSemis: scale.degrees.map(([, s]) => s).sort((a, b) => a - b),
         answerText: tokens.join(' – '),
         placeholder: 'e.g. 1, 2, b3, 4, 5, 6, b7',
+        fb: { kind: 'scale', root: null, item: scale.id },
       });
     }
 
@@ -151,6 +154,7 @@
           answerPcs: scale.degrees.map(([deg, semis]) => rootPitchClass(root, semis)),
           answerText: notes.join(' – '),
           placeholder: 'e.g. D, E, F, G, A, B, C#',
+          fb: { kind: 'scale', root: root.name, item: scale.id },
         });
       }
     }
