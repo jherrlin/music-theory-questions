@@ -227,7 +227,9 @@ summary { cursor: pointer; color: var(--muted); }
   grid-template-columns: 2rem repeat(15, minmax(34px, 1fr));
   gap: 0;
   min-width: 620px;
-  border-left: 4px solid #55608f; /* the nut */
+}
+.fb-fret-label.zero, .fb-string-label.open {
+  border-right: 4px solid #55608f; /* the nut, right of the 0 column */
 }
 .fb-fret-label {
   color: var(--muted);
