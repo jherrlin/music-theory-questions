@@ -316,6 +316,9 @@ summary { cursor: pointer; color: var(--muted); }
   border-bottom: 1px solid #232946;
 }
 .fb-string-label.open { background: rgba(124, 158, 255, 0.07); } /* open-string zone */
+.fb-string-label, .fb-cell {
+  cursor: pointer;
+}
 .fb-cell {
   position: relative;
   height: 44px;

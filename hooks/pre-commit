@@ -1,0 +1,17 @@
+#!/bin/sh
+# Cache-busting: append a content hash to every js/styles reference in
+# index.html so browsers pick up changed assets instead of stale cached ones.
+set -e
+
+cd "$(git rev-parse --show-toplevel)"
+
+for f in js/*.js styles.css; do
+  hash=$(git hash-object "$f" | cut -c1-8)
+  name=$(basename "$f")
+  # Escape regex metacharacters in the filename (the dots in "theory.js" etc.).
+  esc=$(printf '%s' "$name" | sed -e 's/[][\.*^$()+?{}|]/\\&/g')
+  # Match "path" or "path?v=hex"; rewrite to "path?v=<hash>".
+  sed -i -E "s|($esc)(\?v=[a-f0-9]+)?|$name?v=$hash|g" index.html
+done
+
+git add index.html

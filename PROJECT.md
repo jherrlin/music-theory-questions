@@ -37,7 +37,8 @@ Everything the user does is saved in the browser (localStorage).
   downloadable as a Markdown file
 - **Fretboard** — a mandolin fretboard (G–D–A–E courses, frets 0–15, nut line,
   open-string zone) that highlights a chosen chord or scale, with note-name or
-  interval labels (highlighted tones show both)
+  interval labels (highlighted tones show both). Clicking any tone (including the
+  open string) plays it as a plucked string (Web Audio, Karplus-Strong)
 - **Keys** — reference for all keyboard shortcuts
 
 ## Keyboard driven
@@ -59,4 +60,15 @@ The whole flow is usable with only the keyboard (see the Keys view):
 - `js/srs.js` — scheduling and localStorage persistence
 - `js/app.js` — practice UI (card flow, grading, rating, stats)
 - `js/overview.js` — overview view + Markdown download
-- `js/fretboard.js` — fretboard rendering (guide board + help board)
+- `js/fretboard.js` — fretboard rendering (guide board + help board) and tone playback
+
+## Cache busting
+
+A `pre-commit` hook (in `hooks/`) appends a content hash to every `js/*.js` and
+`styles.css` reference in `index.html` (`js/app.js?v=1a2b3c4d`), so browsers pick
+up changed assets instead of stale cached ones. The hook rewrites and re-stages
+`index.html` on every commit. After cloning, enable it once with:
+
+```
+git config core.hooksPath hooks
+```

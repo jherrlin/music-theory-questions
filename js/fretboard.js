@@ -8,10 +8,10 @@
   const srs = window.MT.srs;
 
   const STRINGS = [
-    { label: 'E', pc: 4 },
-    { label: 'A', pc: 9 },
-    { label: 'D', pc: 2 },
-    { label: 'G', pc: 7 },
+    { label: 'E', pc: 4, midi: 76 }, // E5
+    { label: 'A', pc: 9, midi: 69 }, // A4
+    { label: 'D', pc: 2, midi: 62 }, // D4
+    { label: 'G', pc: 7, midi: 55 }, // G3
   ];
   const FRETS = 15;
   const GENERIC_INTERVALS = ['R', '♭2', '2', '♭3', '3', '4', '♭5', '5', '♭6', '6', '♭7', '7'];
@@ -126,6 +126,49 @@
     }));
   }
 
+  /* ---------- sound: click a tone to hear it ---------- */
+
+  let audioCtx = null;
+  function getCtx() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  // Pluck a pitch, Karplus-Strong style: a short noise burst in a feedback
+  // delay ring-buffer decays like a picked string, no audio files needed.
+  function playMidi(midi) {
+    let ctx;
+    try {
+      ctx = getCtx();
+    } catch (e) {
+      return; // no Web Audio available; clicking stays silent
+    }
+    const freq = 440 * Math.pow(2, (midi - 69) / 12);
+    const sr = ctx.sampleRate;
+    const seconds = 1.6;
+    const buffer = ctx.createBuffer(1, Math.ceil(sr * seconds), sr);
+    const data = buffer.getChannelData(0);
+    const n = Math.max(2, Math.round(sr / freq));
+    const ring = new Float32Array(n);
+    for (let i = 0; i < n; i++) ring[i] = Math.random() * 2 - 1;
+    let idx = 0;
+    for (let i = 0; i < data.length; i++) {
+      const cur = ring[idx];
+      const nxt = ring[(idx + 1) % n];
+      ring[idx] = 0.996 * 0.5 * (cur + nxt);
+      idx = (idx + 1) % n;
+      data[i] = cur;
+    }
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const gain = ctx.createGain();
+    gain.gain.value = 0.35;
+    src.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+  }
+
   function addCell(host, text, cls) {
     const cell = document.createElement('div');
     cell.className = cls;
@@ -196,6 +239,9 @@
         (openMember ? ' member' : '') +
         (openIsRoot ? ' root' : '');
       fillCell(labelCell, str.label, openMember, openDiff);
+      labelCell.title = 'Play ' +
+        (openMember ? openMember.note : (useFlats ? FLAT_NAMES[openPc] : SHARP_NAMES[openPc]));
+      labelCell.addEventListener('click', () => playMidi(str.midi));
       grid.appendChild(labelCell);
 
       for (let f = 1; f <= FRETS; f++) {
@@ -208,6 +254,9 @@
           (member ? ' member' : '') +
           (isRoot ? ' root' : ''));
         fillCell(cell, primary(pc, member, diff), member, diff);
+        cell.title = 'Play ' +
+          (member ? member.note : (useFlats ? FLAT_NAMES[pc] : SHARP_NAMES[pc]));
+        cell.addEventListener('click', () => playMidi(str.midi + f));
       }
     }
 
