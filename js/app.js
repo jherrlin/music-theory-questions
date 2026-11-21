@@ -1,0 +1,272 @@
+/* UI wiring: flashcard flow, answer checking, rating buttons, stats panel. */
+(function () {
+  'use strict';
+
+  const T = window.MT;
+  const srs = window.MT.srs;
+
+  const ALL_TYPES = [
+    { id: 'chord-notes', label: 'Chord tones' },
+    { id: 'chord-intervals', label: 'Chord intervals' },
+    { id: 'scale-notes', label: 'Scale notes' },
+    { id: 'scale-intervals', label: 'Scale intervals' },
+  ];
+
+  const deck = T.buildDeck();
+
+  const els = {
+    stats: document.getElementById('stats'),
+    chip: document.getElementById('type-chip'),
+    prompt: document.getElementById('prompt'),
+    answerRow: document.getElementById('answer-row'),
+    input: document.getElementById('answer-input'),
+    checkBtn: document.getElementById('check-btn'),
+    feedback: document.getElementById('feedback'),
+    ratingRow: document.getElementById('rating-row'),
+    enterHint: document.getElementById('enter-hint'),
+    showRow: document.getElementById('show-row'),
+    showBtn: document.getElementById('show-btn'),
+    typeFilters: document.getElementById('type-filters'),
+    hardest: document.getElementById('hardest'),
+    resetBtn: document.getElementById('reset-btn'),
+  };
+
+  const ratingButtons = Array.prototype.slice.call(els.ratingRow.querySelectorAll('button[data-rating]'));
+  const RATING_LABELS = { again: 'Again', hard: 'Hard', good: 'Good', easy: 'Easy' };
+
+  let current = null;
+  let mode = 'asking'; // 'asking' | 'answered'
+  let lastCorrect = false;
+  let answeredAt = 0;
+
+  /* ---------- deck / settings helpers ---------- */
+
+  function enabledTypes() {
+    const saved = srs.getTypes();
+    if (!saved) return ALL_TYPES.map((t) => t.id);
+    return ALL_TYPES.map((t) => t.id).filter((id) => saved.indexOf(id) !== -1);
+  }
+
+  function activeDeck() {
+    const types = enabledTypes();
+    return deck.filter((card) => types.indexOf(card.type) !== -1);
+  }
+
+  function buildTypeFilters() {
+    const saved = srs.getTypes();
+    els.typeFilters.textContent = '';
+    for (const type of ALL_TYPES) {
+      const label = document.createElement('label');
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+      box.value = type.id;
+      box.checked = !saved || saved.indexOf(type.id) !== -1;
+      box.addEventListener('change', onTypeFilterChange);
+      label.appendChild(box);
+      label.appendChild(document.createTextNode(' ' + type.label));
+      els.typeFilters.appendChild(label);
+    }
+  }
+
+  function onTypeFilterChange() {
+    const checked = Array.prototype.slice
+      .call(els.typeFilters.querySelectorAll('input:checked'))
+      .map((box) => box.value);
+    srs.setTypes(checked);
+    updateStats();
+    renderHardest();
+  }
+
+  /* ---------- stats ---------- */
+
+  function updateStats() {
+    const c = srs.counts(activeDeck(), Date.now());
+    const parts = ['Due now: ' + c.due, 'New: ' + c.fresh, 'Seen: ' + c.seen];
+    if (c.accuracy !== null) parts.push('Accuracy: ' + c.accuracy + '%');
+    els.stats.textContent = parts.join(' · ');
+  }
+
+  function renderHardest() {
+    const rows = srs.hardest(activeDeck(), 8);
+    const host = els.hardest;
+    host.textContent = '';
+    const title = document.createElement('h3');
+    title.textContent = 'Problem cards';
+    host.appendChild(title);
+    if (!rows.length) {
+      const p = document.createElement('p');
+      p.textContent = 'Nothing yet — cards you get wrong will show up here.';
+      host.appendChild(p);
+      return;
+    }
+    const table = document.createElement('table');
+    for (const row of rows) {
+      const tr = document.createElement('tr');
+      const tdCard = document.createElement('td');
+      tdCard.textContent = row.card.prompt.replace(/^Which (notes|intervals) (are in|does|is in)/, '');
+      const tdStats = document.createElement('td');
+      const pct = Math.round((100 * row.rec.wrong) / row.rec.reps);
+      tdStats.textContent = row.rec.correct + '✓ / ' + row.rec.wrong + '✗ (' + pct + '% wrong)';
+      tr.appendChild(tdCard);
+      tr.appendChild(tdStats);
+      table.appendChild(tr);
+    }
+    host.appendChild(table);
+  }
+
+  /* ---------- card flow ---------- */
+
+  function renderCard(card) {
+    els.chip.textContent = card.typeLabel;
+    els.prompt.textContent = card.prompt;
+    els.input.placeholder = card.placeholder;
+    els.input.value = '';
+    els.feedback.textContent = '';
+    els.feedback.className = 'feedback';
+    mode = 'asking';
+    els.answerRow.hidden = false;
+    els.showRow.hidden = false;
+    els.ratingRow.hidden = true;
+    els.enterHint.textContent = '';
+    els.input.focus();
+  }
+
+  function next() {
+    const cards = activeDeck();
+    if (!cards.length) {
+      current = null;
+      els.chip.textContent = '—';
+      els.prompt.textContent = 'No card types are selected. Enable at least one type in the settings below.';
+      els.answerRow.hidden = true;
+      els.showRow.hidden = true;
+      els.ratingRow.hidden = true;
+      els.feedback.textContent = '';
+      return;
+    }
+    current = srs.pickNext(cards, Date.now());
+    renderCard(current);
+  }
+
+  // Grade the typed answer against the card. Notes are compared as pitch classes
+  // (spelling/order-insensitive), intervals as semitones (enharmonics allowed).
+  function gradeAnswer(card, raw) {
+    if (card.type === 'chord-notes' || card.type === 'scale-notes') {
+      const tokens = T.extractNoteTokens(raw);
+      if (!tokens.length) return { correct: false, unparsed: true };
+      const got = [];
+      for (const tok of tokens) {
+        const pc = T.parseNoteToken(tok);
+        if (pc === null) return { correct: false, unparsed: true };
+        got.push(pc);
+      }
+      got.sort((a, b) => a - b);
+      const want = card.answerPcs.slice().sort((a, b) => a - b);
+      return { correct: got.length === want.length && got.every((v, i) => v === want[i]) };
+    }
+    const tokens = T.extractIntervalTokens(raw);
+    if (!tokens.length) return { correct: false, unparsed: true };
+    const got = [];
+    for (const tok of tokens) {
+      const s = T.parseIntervalToken(tok);
+      if (s === null) return { correct: false, unparsed: true };
+      got.push(s);
+    }
+    got.sort((a, b) => a - b);
+    const want = card.answerIntervalSemis.slice().sort((a, b) => a - b);
+    return { correct: got.length === want.length && got.every((v, i) => v === want[i]) };
+  }
+
+  function setFeedback(kind, text) {
+    els.feedback.className = 'feedback ' + kind;
+    els.feedback.textContent = text;
+  }
+
+  function finishAsk(result, raw) {
+    mode = 'answered';
+    answeredAt = Date.now();
+    lastCorrect = result ? result.correct : false;
+    const suggested = lastCorrect ? 'good' : 'again';
+
+    if (!result) {
+      setFeedback('neutral', 'Skipped. The answer is: ' + current.answerText + '.');
+    } else if (result.correct) {
+      setFeedback('good', '✓ Correct! ' + current.answerText);
+    } else if (result.unparsed) {
+      setFeedback('bad', '✗ Couldn\u2019t parse that answer. Correct answer: ' + current.answerText + '.');
+    } else {
+      setFeedback('bad', '✗ You answered \u201C' + raw.trim() + '\u201D. Correct answer: ' + current.answerText + '.');
+    }
+
+    const now = Date.now();
+    for (const btn of ratingButtons) {
+      btn.querySelector('.rate-next').textContent = srs.preview(current.id, btn.dataset.rating, now);
+      btn.classList.toggle('suggested', btn.dataset.rating === suggested);
+    }
+    els.enterHint.textContent = 'Enter = ' + RATING_LABELS[suggested];
+
+    els.answerRow.hidden = true;
+    els.showRow.hidden = true;
+    els.ratingRow.hidden = false;
+  }
+
+  function check() {
+    if (!current || mode !== 'asking') return;
+    const raw = els.input.value;
+    if (!raw.trim()) {
+      finishAsk(null, raw); // empty answer = "don't know"
+      return;
+    }
+    finishAsk(gradeAnswer(current, raw), raw);
+  }
+
+  function applyRating(rating) {
+    if (!current || mode !== 'answered') return;
+    srs.grade(current.id, rating, lastCorrect, Date.now());
+    updateStats();
+    renderHardest();
+    next();
+  }
+
+  /* ---------- events ---------- */
+
+  els.checkBtn.addEventListener('click', check);
+  els.showBtn.addEventListener('click', () => {
+    if (current && mode === 'asking') finishAsk(null, '');
+  });
+  for (const btn of ratingButtons) {
+    btn.addEventListener('click', () => {
+      applyRating(btn.dataset.rating);
+      if (btn.blur) btn.blur();
+    });
+  }
+  els.resetBtn.addEventListener('click', () => {
+    if (window.confirm('Forget all progress? This cannot be undone.')) {
+      srs.reset();
+      updateStats();
+      renderHardest();
+      next();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // don't let a focused button fire too
+      if (mode === 'asking') check();
+      else if (mode === 'answered' && Date.now() - answeredAt > 200) {
+        const suggested = els.ratingRow.querySelector('button.suggested');
+        applyRating(suggested ? suggested.dataset.rating : 'good');
+      }
+      return;
+    }
+    if (mode === 'answered' && ['1', '2', '3', '4'].indexOf(e.key) !== -1) {
+      applyRating(['again', 'hard', 'good', 'easy'][Number(e.key) - 1]);
+    }
+  });
+
+  /* ---------- boot ---------- */
+
+  buildTypeFilters();
+  updateStats();
+  renderHardest();
+  next();
+})();

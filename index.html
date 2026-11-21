@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Music Theory Flashcards</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <h1>♪ Music Theory Flashcards</h1>
+      <div id="stats" class="stats"></div>
+    </header>
+
+    <section class="card">
+      <div id="type-chip" class="type-chip"></div>
+      <h2 id="prompt" class="prompt"></h2>
+
+      <div id="answer-row" class="answer-row">
+        <input id="answer-input" type="text" autocomplete="off" spellcheck="false" placeholder="">
+        <button id="check-btn" class="btn primary">Check</button>
+      </div>
+
+      <div id="feedback" class="feedback"></div>
+
+      <div id="rating-row" class="rating-row" hidden>
+        <button class="btn rate again" data-rating="again">
+          <span class="rate-label">Again</span><span class="rate-next"></span><span class="key-hint">1</span>
+        </button>
+        <button class="btn rate hard" data-rating="hard">
+          <span class="rate-label">Hard</span><span class="rate-next"></span><span class="key-hint">2</span>
+        </button>
+        <button class="btn rate good" data-rating="good">
+          <span class="rate-label">Good</span><span class="rate-next"></span><span class="key-hint">3</span>
+        </button>
+        <button class="btn rate easy" data-rating="easy">
+          <span class="rate-label">Easy</span><span class="rate-next"></span><span class="key-hint">4</span>
+        </button>
+      </div>
+      <div id="enter-hint" class="enter-hint"></div>
+
+      <div id="show-row" class="show-row">
+        <button id="show-btn" class="btn ghost">Show answer</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <details>
+        <summary>Practice settings &amp; progress</summary>
+        <div class="panel-body">
+          <fieldset id="type-filters" class="types">
+            <legend>Card types</legend>
+          </fieldset>
+          <div id="hardest"></div>
+          <button id="reset-btn" class="btn danger">Reset all progress</button>
+        </div>
+      </details>
+    </section>
+
+    <footer class="hints">
+      Enter — check / continue · 1–4 — rate card · Answers are saved in your browser (localStorage).
+    </footer>
+  </main>
+
+  <script src="js/theory.js"></script>
+  <script src="js/srs.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
