@@ -107,13 +107,15 @@ h1 { font-size: 1.25rem; margin: 0; color: var(--accent); }
 .keys-table td.kbd { white-space: nowrap; width: 1%; }
 .kbd {
   display: inline-block;
+  white-space: nowrap;
+  line-height: 1.4;
   border: 1px solid rgba(124, 158, 255, 0.35);
   border-radius: 6px;
   background: rgba(124, 158, 255, 0.12);
   color: var(--ink);
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 0.78rem;
-  padding: 2px 8px;
+  padding: 3px 9px;
   margin-right: 6px;
 }
 
