@@ -221,9 +221,12 @@ summary { cursor: pointer; color: var(--muted); }
 .fb-radios { display: flex; gap: 12px; align-items: center; height: 100%; }
 .fb-radios label { display: flex; gap: 5px; align-items: center; font-size: 0.9rem; color: var(--ink); }
 
+.fb-help-note { margin: 0; color: var(--muted); font-size: 0.85rem; }
+
 .fb-title { color: var(--accent); font-weight: 600; margin-bottom: 12px; }
 
 .fretboard-wrap, #fretboard { overflow-x: auto; padding-bottom: 4px; }
+#help-fretboard { overflow-x: auto; padding-bottom: 4px; }
 
 .fb-grid {
   display: grid;

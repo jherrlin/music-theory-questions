@@ -1,5 +1,6 @@
 /* Mandolin fretboard guide: shows notes or intervals, highlights a chord/scale.
-   Mandolin courses are tuned G3–D4–A4–E5; rendered top-to-bottom like tab (E first). */
+   Mandolin courses are tuned G3–D4–A4–E5; rendered top-to-bottom like tab (E first).
+   Also renders a plain all-tones reference board in the Practice view. */
 (function () {
   'use strict';
 
@@ -97,13 +98,13 @@
       sel.item = sel.kind === 'chord' ? 'maj' : 'major';
       buildControls(); // rebuild item list for the new kind
       saveSel();
-      renderBoard();
-    }).id = 'fb-kind';
+      renderMain();
+    });
 
     selectField('Key', T.ROOT_NAMES.map((n) => ({ value: n, label: n })), sel.root, (e) => {
       sel.root = e.target.value;
       saveSel();
-      renderBoard();
+      renderMain();
     });
 
     const itemOptions = sel.kind === 'chord'
@@ -112,7 +113,7 @@
     selectField(sel.kind === 'chord' ? 'Chord type' : 'Scale type', itemOptions, sel.item, (e) => {
       sel.item = e.target.value;
       saveSel();
-      renderBoard();
+      renderMain();
     });
 
     els.controls.appendChild(radioField('fb-mode', [
@@ -121,7 +122,7 @@
     ], sel.mode, (e) => {
       if (e.target.checked) sel.mode = e.target.value;
       saveSel();
-      renderBoard();
+      renderMain();
     }));
   }
 
@@ -133,14 +134,45 @@
     return cell;
   }
 
-  function renderBoard() {
-    const tone = selection();
-    const useFlats = /b$/.test(tone.rootName); // Db, Eb, Gb, Ab, Bb contexts
+  // Render a fretboard into `container`. When `tone` is null nothing is
+  // highlighted (plain all-tones reference board); `mode` picks the primary
+  // label, and highlighted tones also show the other representation beneath.
+  // `withTitle` adds the selection summary line above the board.
+  function renderInto(container, tone, mode, withTitle) {
+    const useFlats = tone ? /b$/.test(tone.rootName) : false; // Db, Eb, Gb, Ab, Bb contexts
     const memberByPc = {};
     const intervalBySemis = {};
-    for (const t of tone.tones) {
-      memberByPc[t.pc] = t;
-      intervalBySemis[t.semis] = t.interval === '1' ? 'R' : t.interval;
+    if (tone) {
+      for (const t of tone.tones) {
+        memberByPc[t.pc] = t;
+        intervalBySemis[t.semis] = t.interval === '1' ? 'R' : t.interval;
+      }
+    }
+
+    function primary(pc, member, diff) {
+      if (mode === 'notes') {
+        return member ? member.note : (useFlats ? FLAT_NAMES[pc] : SHARP_NAMES[pc]);
+      }
+      return member ? intervalBySemis[diff] : GENERIC_INTERVALS[diff];
+    }
+
+    function secondary(member, diff) {
+      if (!member) return null;
+      return mode === 'notes' ? intervalBySemis[diff] : member.note;
+    }
+
+    function fillCell(cell, text, member, diff) {
+      const dot = document.createElement('span');
+      dot.className = 'fb-dot';
+      dot.textContent = text;
+      cell.appendChild(dot);
+      const subText = secondary(member, diff);
+      if (subText) {
+        const sub = document.createElement('span');
+        sub.className = 'fb-sub';
+        sub.textContent = subText;
+        cell.appendChild(sub);
+      }
     }
 
     const grid = document.createElement('div');
@@ -152,70 +184,49 @@
 
     for (const str of STRINGS) {
       const openPc = str.pc % 12;
-      const openMember = memberByPc[openPc];
+      const openMember = tone ? memberByPc[openPc] : null;
       const openIsRoot = !!openMember && openMember.semis === 0;
+      const openDiff = tone ? (openPc - tone.rootPc + 12) % 12 : 0;
 
-      // String label doubles as the open-string position: highlighted when
-      // the open tone is part of the selection, drawn inside the open zone
+      // The string label doubles as the open-string position: highlighted
+      // when the open tone is part of the selection, inside the open zone
       // left of the nut.
       const labelCell = document.createElement('div');
       labelCell.className = 'fb-string-label open' +
         (openMember ? ' member' : '') +
         (openIsRoot ? ' root' : '');
-      const openDot = document.createElement('span');
-      openDot.className = 'fb-dot';
-      openDot.textContent = str.label;
-      labelCell.appendChild(openDot);
-      if (openMember) {
-        const openSub = document.createElement('span');
-        openSub.className = 'fb-sub';
-        openSub.textContent = sel.mode === 'notes'
-          ? intervalBySemis[0]
-          : openMember.note;
-        labelCell.appendChild(openSub);
-      }
+      fillCell(labelCell, str.label, openMember, openDiff);
       grid.appendChild(labelCell);
 
       for (let f = 1; f <= FRETS; f++) {
         const pc = (str.pc + f) % 12;
-        const member = memberByPc[pc];
+        const member = tone ? memberByPc[pc] : null;
         const isRoot = !!member && member.semis === 0;
-        const diff = (pc - tone.rootPc + 12) % 12;
+        const diff = tone ? (pc - tone.rootPc + 12) % 12 : 0;
 
-        // Primary label follows the selected mode; highlighted cells also
-        // show the other representation underneath for cross-reference.
-        const primary = sel.mode === 'notes'
-          ? (member ? member.note : (useFlats ? FLAT_NAMES[pc] : SHARP_NAMES[pc]))
-          : (member ? intervalBySemis[diff] : GENERIC_INTERVALS[diff]);
-
-        const cls = 'fb-cell' +
+        const cell = addCell(grid, '', 'fb-cell' +
           (member ? ' member' : '') +
-          (isRoot ? ' root' : '');
-        const cell = addCell(grid, '', cls);
-        const dot = document.createElement('span');
-        dot.className = 'fb-dot';
-        dot.textContent = primary;
-        cell.appendChild(dot);
-        if (member) {
-          const sub = document.createElement('span');
-          sub.className = 'fb-sub';
-          sub.textContent = sel.mode === 'notes'
-            ? intervalBySemis[diff]
-            : member.note;
-          cell.appendChild(sub);
-        }
+          (isRoot ? ' root' : ''));
+        fillCell(cell, primary(pc, member, diff), member, diff);
       }
     }
 
-    els.board.textContent = '';
-    const title = document.createElement('div');
-    title.className = 'fb-title';
-    title.textContent = tone.title + ' — ' + tone.tones.map((t) => t.note).join(' – ') +
-      ' (' + tone.tones.map((t) => (t.interval === '1' ? 'R' : t.interval)).join(' ') + ')';
-    els.board.appendChild(title);
-    els.board.appendChild(grid);
+    container.textContent = '';
+    if (withTitle && tone) {
+      const title = document.createElement('div');
+      title.className = 'fb-title';
+      title.textContent = tone.title + ' — ' + tone.tones.map((t) => t.note).join(' – ') +
+        ' (' + tone.tones.map((t) => (t.interval === '1' ? 'R' : t.interval)).join(' ') + ')';
+      container.appendChild(title);
+    }
+    container.appendChild(grid);
+  }
+
+  function renderMain() {
+    renderInto(els.board, selection(), sel.mode, true);
   }
 
   buildControls();
-  renderBoard();
+  renderMain();
+  renderInto(document.getElementById('help-fretboard'), null, 'notes', false);
 })();
